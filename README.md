@@ -19,6 +19,8 @@ cd GO-intern-test
 1. Open XAMPP and start the Apache server.
 
 2. Copy the project folder (`be`) to the `htdocs` directory of your XAMPP installation.
+   
+3. uncomment the line Extension= pgsql in the php.ini file
 
 ### Running the Frontend
 
