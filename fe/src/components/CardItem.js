@@ -1,10 +1,10 @@
+import React from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { formatMoney } from "../lib/utils";
+import { formatMoney } from "../lib/formatMoney";
 import { useMutation } from "react-query";
 import { baseURL } from "../lib/baseURL";
 
-
-export function CartItem({ data }) {    
+const CartItem = ({ data }) => {
     const { mutate } = useMutation({
         mutationFn: (quantity) => baseURL({
             method: "post",
@@ -16,35 +16,35 @@ export function CartItem({ data }) {
             headers: { "Content-Type": "multipart/form-data" },
         }),
         onSuccess({ data }) {
+            // Handle success if needed
         }
-    })
-    const [cartItems, setCartItems] = useLocalStorage('cart', [])
+    });
+
+    const [cartItems, setCartItems] = useLocalStorage('cart', []);
     const index = cartItems.findIndex(item => item.id === data.id);
 
     const updateQuantity = (q) => {
-        const newQuantity = cartItems[index].quantity + q > 0 ? cartItems[index].quantity + q : 0;
+        const newQuantity = Math.max(cartItems[index]?.quantity + q, 0);
+
         if (newQuantity === 0) {
             setCartItems([
                 ...cartItems.slice(0, index),
                 ...cartItems.slice(index + 1),
-            ])
-            mutate(newQuantity)
-            return;
+            ]);
+        } else {
+            setCartItems([
+                ...cartItems.slice(0, index),
+                { ...data, quantity: newQuantity },
+                ...cartItems.slice(index + 1),
+            ]);
         }
-        setCartItems([
-            ...cartItems.slice(0, index),
-            {
-                ...data,
-                quantity: newQuantity
-            },
-            ...cartItems.slice(index + 1),
 
-        ])
-        mutate(newQuantity)
-    }
+        mutate(newQuantity);
+    };
+
     return (
-        <div className="flex items-start  py-5">
-            <div className="w-[90px] h-[90px] mr-[34px] rounded-full  flex-shrink-0" style={{ backgroundColor: data.color }}>
+        <div className="flex items-start py-5">
+            <div className="w-[90px] h-[90px] mr-[34px] rounded-full flex-shrink-0" style={{ backgroundColor: data.color }}>
                 <div className="block">
                     <img
                         style={{
@@ -52,7 +52,9 @@ export function CartItem({ data }) {
                             filter: "drop-shadow(0 30px 20px rgba(0,0,0,.2))"
                         }}
                         src={data.image}
-                        className="w-[140%] block max-w-[140%]" />
+                        className="w-[140%] block max-w-[140%]"
+                        alt={data.name}
+                    />
                 </div>
             </div>
             <div className="w-full">
@@ -68,11 +70,13 @@ export function CartItem({ data }) {
                             +
                         </button>
                     </div>
-                    <button onClick={() => updateQuantity(- cartItems[index]?.quantity)} className="w-7 h-7 flex items-center justify-center bg-[#f6c90e] rounded-full">
-                        <img src="/trash.png" className="w-4 h-4" />
+                    <button onClick={() => updateQuantity(-cartItems[index]?.quantity)} className="w-7 h-7 flex items-center justify-center bg-[#f6c90e] rounded-full">
+                        <img src="/trash.png" className="w-4 h-4" alt="Delete" />
                     </button>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
+
+export default CartItem;

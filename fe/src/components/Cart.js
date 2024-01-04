@@ -1,30 +1,33 @@
-import { useReadLocalStorage, useLocalStorage } from "usehooks-ts";
-import { CartItem } from "./CardItem";
-import { formatMoney } from '../lib/utils'
-export function Cart() {
-    const cartItems = useReadLocalStorage('cart', [])
-    let total = 0;    
-    if (cartItems) {
-        total = cartItems.reduce((acc, crr) => acc + (+crr.price * crr.quantity), 0);
-    }
-    return <div className="card">
-        <img src="nike.png" className="w-[50px] my-3 z-10 relative" />
-        <div className="flex justify-between items-center">
-            <div className="text-[24px] font-bold relative my-4">Your cart</div>
-            <div className="text-[24px] font-bold relative my-4">${formatMoney(total)}</div>
-        </div>
-        <div className="card-body relative">
-            <ul className="pb-8">
-                <div className="my-5 text-sm font-thin hidden last:block"><p>Your cart is empty.</p></div>
-                {
-                    cartItems?.map(card => {
-                        return <li key={card.id}>
-                            <CartItem data={card} />
-                        </li>
-                    })
-                }
+import React from "react";
+import { useReadLocalStorage } from "usehooks-ts";
+import CartItem from "./CardItem";
+import { formatMoney } from '../lib/formatMoney';
 
-            </ul>
+const Cart = () => {
+    const cartItems = useReadLocalStorage('cart', []);
+    const total = cartItems.reduce((acc, { price, quantity }) => acc + (+price * quantity), 0);
+
+    return (
+        <div className="card">
+            <img src="nike.png" className="w-[50px] my-3 z-10 relative" alt="Logo" />
+            <div className="flex justify-between items-center">
+                <div className="text-[24px] font-bold relative my-4">Your cart</div>
+                <div className="text-[24px] font-bold relative my-4">${formatMoney(total)}</div>
+            </div>
+            <div className="card-body relative">
+                <ul className="pb-8">
+                    <div className={`my-5 text-sm font-thin ${cartItems.length === 0 ? 'hidden last:block' : ''}`}>
+                        <p>Your cart is empty.</p>
+                    </div>
+                    {cartItems.map((item) => (
+                        <li key={item.id}>
+                            <CartItem data={item} />
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
-    </div>
-}
+    );
+};
+
+export default Cart;
