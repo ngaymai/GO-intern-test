@@ -1,0 +1,17 @@
+RewriteEngine On
+
+# For GET requests to /api/get-product
+RewriteCond %{REQUEST_METHOD} =GET
+RewriteRule ^api/get-product$ index.php [NC,L]
+
+
+# For POST requests to /api/add-to-cart
+RewriteCond %{REQUEST_METHOD} =POST
+RewriteRule ^api/add-to-cart$ index.php [NC,L]
+
+
+
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
