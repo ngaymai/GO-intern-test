@@ -49,5 +49,3 @@ The frontend should now be running at `http://localhost:3000`. Open your web bro
 - Make sure that your backend services, such as APIs or databases, are configured correctly according to your project requirements.
 
 ---
-
-Replace "Project Name" with the actual name of your project and adjust the URLs and paths accordingly. This README assumes a basic setup and may need modifications based on the specific requirements and technologies used in your project.
